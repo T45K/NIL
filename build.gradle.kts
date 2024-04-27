@@ -1,10 +1,9 @@
 plugins {
-    // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.4.10"
-    id("com.github.johnrengelman.shadow") version "6.0.0"
+    kotlin("jvm") version "2.0.0-RC1"
+
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("antlr")
 
-    // Apply the application plugin to add support for building a CLI application.
     application
 }
 
@@ -13,37 +12,36 @@ repositories {
 }
 
 dependencies {
-    // Align versions of all Kotlin components
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-
-    // Use the Kotlin JDK 8 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-
     // Use RxKotlin
-    implementation("io.reactivex.rxjava3:rxkotlin:3.0.0")
+    implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
 
     // Use Logger
-    implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("ch.qos.logback:logback-classic:1.5.6")
 
     // Use JDT
-    implementation("org.eclipse.jdt:org.eclipse.jdt.core:3.22.0")
+    implementation("org.eclipse.jdt:org.eclipse.jdt.core:3.37.0")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 
-    // Use the Kotlin JUnit integration.
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
-
     // Use ANTLR
-    antlr("org.antlr:antlr4:4.9")
+    antlr("org.antlr:antlr4:4.13.1")
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 application {
     mainClass = "jp.ac.osaka_u.sdl.nil.NILMainKt"
 }
 
-val jar by tasks.getting(Jar::class) {
-    manifest {
-        attributes["Main-Class"] = "jp.ac.osaka_u.sdl.nil.NILMainKt"
-    }
+tasks.generateGrammarSource {
+    enabled = false
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
 }
