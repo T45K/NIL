@@ -12,7 +12,6 @@ data class NILConfig(
     val verificationThreshold: Int = 70,
     val outputFileName: String = "result.csv",
     val threads: Int = 0,
-    val lang: Language = Language.JAVA,
     val isForBigCloneEval: Boolean = false,
     val isForMutationInjectionFramework: Boolean = false,
 )
@@ -27,7 +26,6 @@ fun parseArgs(args: Array<String>): NILConfig {
     var verificationThreshold = 70
     var outputFileName: String? = null
     var threads = 0
-    var lang = Language.JAVA
     var isForBigCloneEval = false
     var isForMutationInjectionFramework = false
 
@@ -43,7 +41,6 @@ fun parseArgs(args: Array<String>): NILConfig {
             "-v", "--verification-threshold" -> verificationThreshold = iterator.next().toIntOrException(optionName)
             "-o", "--output" -> outputFileName = iterator.next()
             "-t", "--threads" -> threads = iterator.next().toInt()
-            "-l", "--language" -> lang = iterator.next().toLangOrException()
             "-bce", "--bigcloneeval" -> isForBigCloneEval = true
             "-mif", "--mutationinjectionframework" -> isForMutationInjectionFramework = true
             else -> throw InvalidOptionException("$optionName is invalid option.")
@@ -64,7 +61,6 @@ fun parseArgs(args: Array<String>): NILConfig {
         verificationThreshold,
         outputFileName ?: "result_${gramSize}_${filtrationThreshold}_${verificationThreshold}.csv",
         threads,
-        lang,
         isForBigCloneEval,
         isForMutationInjectionFramework,
     )
@@ -75,17 +71,6 @@ fun String.toIntOrException(optionName: String): Int =
         this.toInt()
     } catch (e: NumberFormatException) {
         throw InvalidOptionException("$optionName value $this is not integer.")
-    }
-
-fun String.toLangOrException(): Language =
-    when (this.lowercase()) {
-        "java" -> Language.JAVA
-        "c" -> Language.C
-        "cpp" -> Language.CPP
-        "cs", "csharp" -> Language.CS
-        "py", "python" -> Language.PYTHON
-        "kt", "kotlin" -> Language.KOTLIN
-        else -> throw InvalidOptionException("Language $this is invalid.")
     }
 
 class InvalidOptionException(private val option: String) : RuntimeException() {
@@ -100,12 +85,7 @@ class InvalidOptionException(private val option: String) : RuntimeException() {
             |-v, --verification-threshold${'\t'}${'\t'}Verification threshold (default: 70%)
             |-o, --output${'\t'}${'\t'}${'\t'}${'\t'}Output file name (default: result_{N-gram}_{filtering_threshold}_{verifying_threshold}.csv)
             |-t, --threads${'\t'}${'\t'}${'\t'}${'\t'}The number of threads used for parallel execution (default: all threads)
-            |-l, --language${'\t'}${'\t'}${'\t'}${'\t'}Target language (default: java)
             |-bce, --bigcloneeval${'\t'}${'\t'}${'\t'}Output result feasible to BigCloneEval (default: false)
             |-mif, --mutationinjectionframework${'\t'}Output result feasible to MutationInjectionFramework (default: false)
         """.trimMargin()
-}
-
-enum class Language {
-    JAVA, CPP, C, CS, PYTHON, KOTLIN
 }

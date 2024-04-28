@@ -2,7 +2,6 @@ plugins {
     kotlin("jvm") version "2.0.0-RC1"
 
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("antlr")
 
     application
 }
@@ -23,9 +22,6 @@ dependencies {
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
-
-    // Use ANTLR
-    antlr("org.antlr:antlr4:4.13.1")
 }
 
 java {
@@ -36,10 +32,6 @@ java {
 
 application {
     mainClass = "jp.ac.osaka_u.sdl.nil.NILMainKt"
-}
-
-tasks.generateGrammarSource {
-    enabled = false
 }
 
 tasks.named<Test>("test") {
